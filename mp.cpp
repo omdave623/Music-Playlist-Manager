@@ -122,7 +122,7 @@ public:
         Song* temp = head;
         int count = 1;
 
-        cout << "\n========== MY PLAYLIST ==========\n";
+        cout << "\n RECENTLY PLAYED (STACK) \n";
 
         while (temp != NULL) {
             cout << "\nSong " << count++ << endl;
@@ -136,7 +136,7 @@ public:
                 cout << "Status   : Current Song" << endl;
             }
 
-            cout << "---------------------------------\n";
+            
             temp = temp->next;
         }
     }
@@ -275,7 +275,7 @@ public:
 
         while (temp != NULL) {
             if (temp->title == title) {
-                cout << "\n========== SONG FOUND ==========\n";
+                cout << "\n SONG FOUND \n";
                 cout << "Title    : " << temp->title << endl;
                 cout << "Artist   : " << temp->artist << endl;
                 cout << "Album    : " << temp->album << endl;
@@ -301,7 +301,7 @@ public:
         RecentNode* temp = recentTop;
         int count = 1;
 
-        cout << "\n===== RECENTLY PLAYED (STACK) =====\n";
+        cout << "\n RECENTLY PLAYED (STACK) \n";
 
         while (temp != NULL) {
             cout << "\n" << count++ << ". " << temp->title << endl;
@@ -319,9 +319,7 @@ int main() {
     int choice;
 
     do {
-        cout << "\n====================================\n";
         cout << "       MUSIC PLAYLIST MANAGER\n";
-        cout << "====================================\n";
         cout << "1. Add Song\n";
         cout << "2. Display Playlist\n";
         cout << "3. Delete Song\n";
@@ -331,7 +329,6 @@ int main() {
         cout << "7. Search Song\n";
         cout << "8. Show Recently Played\n";
         cout << "9. Exit\n";
-        cout << "====================================\n";
         cout << "Enter your choice: ";
 
         if (!(cin >> choice)) {
