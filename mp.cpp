@@ -131,50 +131,6 @@ public:
     }
 
     
-    // 9. Add Song to Queue
-    void addToQueue()
-     {
-        if (head == NULL) {
-            cout << "\nPlaylist is empty! Add songs first.\n";
-            return;
-        }
-
-        string title;
-        cout << "\nEnter song title to add to queue: ";
-        getline(cin >> ws, title);
-
-        // Find song in the main playlist
-        Song* temp = head;
-
-        while (temp != NULL && temp->title != title) {
-            temp = temp->next;
-        }
-
-        if (temp == NULL) {
-            cout << "\nSong not found in playlist!\n";
-            return;
-        }
-
-        // Create a separate queue node
-        Song* newNode = new Song;
-        newNode->title = temp->title;
-        newNode->artist = temp->artist;
-        newNode->album = temp->album;
-        newNode->duration = temp->duration;
-        newNode->prev = queueRear;
-        newNode->next = NULL;
-
-        // Add node at the rear of the queue
-        if (queueFront == NULL) {
-            queueFront = queueRear = newNode;
-        } else {
-            queueRear->next = newNode;
-            queueRear = newNode;
-        }
-
-        cout << "\nSong added to upcoming queue successfully!\n";
-    }
-
 
     // 2. Display Playlist
     void displayPlaylist() {
@@ -376,14 +332,135 @@ public:
             temp = temp->next;
         }
     }
+
+    
+    // 9. Add Song to Queue
+    void addToQueue()
+     {
+        if (head == NULL) {
+            cout << "\nPlaylist is empty! Add songs first.\n";
+            return;
+        }
+
+        string title;
+        cout << "\nEnter song title to add to queue: ";
+        getline(cin >> ws, title);
+
+        // Find song in the main playlist
+        Song* temp = head;
+
+        while (temp != NULL && temp->title != title) {
+            temp = temp->next;
+        }
+
+        if (temp == NULL) {
+            cout << "\nSong not found in playlist!\n";
+            return;
+        }
+
+        // Create a separate queue node
+        Song* newNode = new Song;
+        newNode->title = temp->title;
+        newNode->artist = temp->artist;
+        newNode->album = temp->album;
+        newNode->duration = temp->duration;
+        newNode->prev = queueRear;
+        newNode->next = NULL;
+
+        // Add node at the rear of the queue
+        if (queueFront == NULL) {
+            queueFront = queueRear = newNode;
+        } else {
+            queueRear->next = newNode;
+            queueRear = newNode;
+        }
+
+        cout << "\nSong added to upcoming queue successfully!\n";
+    }
+
+    
+    // 10. Display Upcoming Queue
+    void showQueue() {
+        if (queueFront == NULL) {
+            cout << "\nUpcoming queue is empty!\n";
+            return;
+        }
+
+        Song* temp = queueFront;
+        int count = 1;
+
+        cout << "\n===== UPCOMING SONGS QUEUE =====\n";
+
+        while (temp != NULL) {
+            cout << "\n" << count++ << ". " << temp->title << endl;
+            cout << "Artist   : " << temp->artist << endl;
+            cout << "Album    : " << temp->album << endl;
+            cout << "Duration : " << temp->duration
+                 << " minutes" << endl;
+
+            temp = temp->next;
+        }
+
+        cout << "================================\n";
+    }
+
+    
+    // 11. Play Next Song from Queue
+    void playNextFromQueue() {
+        if (queueFront == NULL) {
+            cout << "\nUpcoming queue is empty!\n";
+            return;
+        }
+
+        // Remove the first song from the queue
+        Song* queuedSong = queueFront;
+        queueFront = queueFront->next;
+
+        if (queueFront == NULL) {
+            queueRear = NULL;
+        } else {
+            queueFront->prev = NULL;
+        }
+
+        // Find the song in the main playlist
+        Song* temp = head;
+
+        while (temp != NULL &&
+               temp->title != queuedSong->title) {
+            temp = temp->next;
+        }
+
+        if (temp == NULL) {
+            cout << "\nSong \"" << queuedSong->title
+                 << "\" is no longer in the playlist.\n";
+
+            delete queuedSong;
+            return;
+        }
+
+        current = temp;
+        pushRecent(current);
+
+        cout << "\nNow Playing from Queue: "
+             << current->title << endl;
+        cout << "Artist   : " << current->artist << endl;
+        cout << "Album    : " << current->album << endl;
+
+        // Free the removed queue node
+        delete queuedSong;
+    }
+
+
+
 };
+
 
 int main() {
     Playlist playlist;
     int choice;
 
     do {
-        cout << "       MUSIC PLAYLIST MANAGER\n";
+        cout << "\n======= MUSIC PLAYLIST MANAGER =======\n";
         cout << "1. Add Song\n";
         cout << "2. Display Playlist\n";
         cout << "3. Delete Song\n";
@@ -392,7 +469,10 @@ int main() {
         cout << "6. Previous Song\n";
         cout << "7. Search Song\n";
         cout << "8. Show Recently Played\n";
-        cout << "9. Exit\n";
+        cout << "9. Add Song to Queue\n";
+        cout << "10. Show Upcoming Queue\n";
+        cout << "11. Play Next Song from Queue\n";
+        cout << "12. Exit\n";
         cout << "Enter your choice: ";
 
         if (!(cin >> choice)) {
@@ -436,14 +516,26 @@ int main() {
                 break;
 
             case 9:
+                playlist.addToQueue();
+                break;
+
+            case 10:
+                playlist.showQueue();
+                break;
+
+            case 11:
+                playlist.playNextFromQueue();
+                break;
+
+            case 12:
                 cout << "\nExiting Music Playlist Manager...\n";
                 break;
 
             default:
-                cout << "\nInvalid choice! Please enter 1-9.\n";
+                cout << "\nInvalid choice! Please enter 1-12.\n";
         }
 
-    } while (choice != 9);
+    } while (choice != 12);
 
     return 0;
 }
