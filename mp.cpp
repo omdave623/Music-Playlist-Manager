@@ -31,6 +31,8 @@ private:
     Song* current;
 
     RecentNode* recentTop;
+    Song* queueFront;
+    Song* queueRear;
 
     // Add a song to the Recently Played Stack
     void pushRecent(Song* song) {
@@ -52,22 +54,38 @@ public:
         tail = NULL;
         current = NULL;
         recentTop = NULL;
+        queueFront = NULL;
+        queueRear = NULL;
     }
 
     // Destructor: free dynamically allocated memory
+    
+    // Destructor: free dynamically allocated memory
     ~Playlist() {
+        // Free playlist nodes
         while (head != NULL) {
             Song* temp = head;
             head = head->next;
             delete temp;
         }
 
+        // Free recently played stack nodes
         while (recentTop != NULL) {
             RecentNode* temp = recentTop;
             recentTop = recentTop->next;
             delete temp;
         }
+
+        // Free upcoming queue nodes
+        while (queueFront != NULL) {
+            Song* temp = queueFront;
+            queueFront = queueFront->next;
+            delete temp;
+        }
+
+        queueRear = NULL;
     }
+
 
     // 1. Add Song
     void addSong() {
@@ -112,6 +130,52 @@ public:
         cout << "\nSong added successfully!\n";
     }
 
+    
+    // 9. Add Song to Queue
+    void addToQueue()
+     {
+        if (head == NULL) {
+            cout << "\nPlaylist is empty! Add songs first.\n";
+            return;
+        }
+
+        string title;
+        cout << "\nEnter song title to add to queue: ";
+        getline(cin >> ws, title);
+
+        // Find song in the main playlist
+        Song* temp = head;
+
+        while (temp != NULL && temp->title != title) {
+            temp = temp->next;
+        }
+
+        if (temp == NULL) {
+            cout << "\nSong not found in playlist!\n";
+            return;
+        }
+
+        // Create a separate queue node
+        Song* newNode = new Song;
+        newNode->title = temp->title;
+        newNode->artist = temp->artist;
+        newNode->album = temp->album;
+        newNode->duration = temp->duration;
+        newNode->prev = queueRear;
+        newNode->next = NULL;
+
+        // Add node at the rear of the queue
+        if (queueFront == NULL) {
+            queueFront = queueRear = newNode;
+        } else {
+            queueRear->next = newNode;
+            queueRear = newNode;
+        }
+
+        cout << "\nSong added to upcoming queue successfully!\n";
+    }
+
+
     // 2. Display Playlist
     void displayPlaylist() {
         if (head == NULL) {
@@ -122,7 +186,7 @@ public:
         Song* temp = head;
         int count = 1;
 
-        cout << "\n RECENTLY PLAYED (STACK) \n";
+        cout << "\n MY PLAYLIST \n";
 
         while (temp != NULL) {
             cout << "\nSong " << count++ << endl;
